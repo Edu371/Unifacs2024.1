@@ -4,6 +4,8 @@ from django.forms import ValidationError
 
 import re
 from utils.validacpf import valida_cpf
+from dateutil.relativedelta import relativedelta
+import datetime
 
 
 class Perfil(models.Model):
@@ -20,7 +22,7 @@ class Perfil(models.Model):
     cidade = models.CharField(max_length=30)
     estado = models.CharField(
         max_length=2,
-        default='SP',
+        default='BA',
         choices=(
             ('AC', 'Acre'),
             ('AL', 'Alagoas'),
@@ -61,6 +63,11 @@ class Perfil(models.Model):
         cpf_enviado = self.cpf or None
         cpf_salvo = None
         perfil = Perfil.objects.filter(cpf=cpf_enviado).first()
+
+        # calculando idade
+        self.idade = relativedelta(datetime.datetime.now(), self.data_nascimento).years
+        if self.idade < 18:
+            error_messages['data_nascimento'] = 'Idade Mínima: 18 anos.'
 
         if perfil:
             cpf_salvo = perfil.cpf

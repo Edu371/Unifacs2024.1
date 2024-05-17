@@ -7,7 +7,8 @@ class PerfilForm(forms.ModelForm):
     class Meta:
         model = models.Perfil
         fields = '__all__'
-        exclude = ('usuario',)
+        exclude = ('usuario', 'idade')
+        widgets = {'data_nascimento': forms.DateInput(format=('%d/%m/%Y'), attrs={'class':'form-control', 'placeholder':'Selecione Data', 'type':'date'})}
 
 
 class UserForm(forms.ModelForm):
@@ -90,6 +91,7 @@ class UserForm(forms.ModelForm):
 
             if len(password_data) < 6:
                 validation_error_msgs['password'] = error_msg_password_short
+                
 
         if validation_error_msgs:
             raise(forms.ValidationError(validation_error_msgs))

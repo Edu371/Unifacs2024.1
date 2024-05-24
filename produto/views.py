@@ -17,11 +17,21 @@ class ListaProdutos(ListView):
     paginate_by = 10
     ordering = ['-id']
 
+    def get_context_data(self, **kwargs):
+        context = super(ListaProdutos, self).get_context_data(**kwargs)
+        context['categorias'] =  models.Categoria.objects.all()
+
+        return context
+        
 
 class Busca(ListaProdutos):
     def get_queryset(self, *args, **kwargs):
-        termo = self.request.GET.get('termo') or self.request.session['termo']
+        termo = self.request.GET.get('termo') # or self.request.session['termo']
+        categoria = self.request.GET.get('categoria')
         qs = super().get_queryset(*args, **kwargs)
+
+        if categoria:
+            qs = qs.filter(categoria__nome=categoria)
 
         if not termo:
             return qs
@@ -201,3 +211,7 @@ class ResumoDaCompra(View):
         }
 
         return render(self.request, 'produto/resumodacompra.html', contexto)
+
+def sobre(request):
+    return render(request, 'sobre.html', {})
+    

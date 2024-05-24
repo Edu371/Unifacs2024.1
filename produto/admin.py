@@ -18,6 +18,6 @@ class ProdutoAdmin(admin.ModelAdmin):
         VariacaoInline
     ]
 
-
+admin.site.register(models.Categoria)
 admin.site.register(models.Produto, ProdutoAdmin)
 admin.site.register(models.Variacao)

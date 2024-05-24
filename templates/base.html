@@ -9,11 +9,14 @@
 <body>
     {% include 'parciais/_nav.html' %}
 
-    <main class="container mt-4 mb-4">
+    <main style="display: flex; flex:1">
+        {% block categorias%}{% endblock %}
+
+    <div class="container mt-4 mb-4">
         {% include 'parciais/_messages.html' %}
         {% block conteudo %}{% endblock %}
+    </div>
     </main>
-
     {% include 'parciais/_footer.html' %}
 
 </body>

@@ -6,6 +6,12 @@ from django.utils.text import slugify
 from utils import utils
 
 
+class Categoria(models.Model):
+    nome = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.nome
+
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
     descricao_curta = models.TextField(max_length=255)
@@ -16,6 +22,7 @@ class Produto(models.Model):
     preco_marketing = models.FloatField(verbose_name='Preço')
     preco_marketing_promocional = models.FloatField(
         default=0, verbose_name='Preço Promo.')
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=True, null=True)
     tipo = models.CharField(
         default='V',
         max_length=1,

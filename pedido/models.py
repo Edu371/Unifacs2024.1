@@ -18,6 +18,7 @@ class Pedido(models.Model):
             ('F', 'Finalizado'),
         )
     )
+    metodo = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f'Pedido N. {self.pk}'

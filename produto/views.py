@@ -16,10 +16,12 @@ class ListaProdutos(ListView):
     context_object_name = 'produtos'
     paginate_by = 10
     ordering = ['-id']
+    page_title = 'Adicionados Recentemente'
 
     def get_context_data(self, **kwargs):
         context = super(ListaProdutos, self).get_context_data(**kwargs)
         context['categorias'] =  models.Categoria.objects.all()
+        context['page_title'] = self.page_title
 
         return context
         
@@ -29,9 +31,11 @@ class Busca(ListaProdutos):
         termo = self.request.GET.get('termo') # or self.request.session['termo']
         categoria = self.request.GET.get('categoria')
         qs = super().get_queryset(*args, **kwargs)
+        self.page_title = ''
 
         if categoria:
             qs = qs.filter(categoria__nome=categoria)
+            self.page_title += f'Categoria: {categoria}'
 
         if not termo:
             return qs
@@ -45,6 +49,11 @@ class Busca(ListaProdutos):
         )
 
         self.request.session.save()
+        if categoria:
+            self.page_title += f', Busca: {termo}'
+        else:
+            self.page_title = f'Busca: {termo}'
+        
         return qs
 
 

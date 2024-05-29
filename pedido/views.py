@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, render
 from django.views.generic import ListView, DetailView
 from django.views import View
 # from django.http import HttpResponse
@@ -28,7 +28,29 @@ class Pagar(DispatchLoginRequiredMixin, DetailView):
     model = Pedido
     pk_url_kwarg = 'pk'
     context_object_name = 'pedido'
+    def get(self, *args, **kwargs):
+        pedido = Pedido.objects.get(pk=kwargs['pk'])
+        contexto = {'pedido': pedido}
+        if pedido.status != 'C':
+            messages.error(self.request, 'Pagamento Já Realizado')
+            return redirect('pedido:lista')
+            
+        return render(self.request, 'pedido/pagar.html', contexto)
 
+def confirmado(request):
+    pedido_id = request.GET.get('pedido')
+    metodo = request.GET.get('metodo')
+    pedido = Pedido.objects.get(pk=pedido_id)
+    if pedido.status == 'C':
+        pedido.status = 'A'
+        pedido.metodo = metodo
+        pedido.save()
+
+        return redirect(reverse('pedido:detalhe', kwargs={'pk': pedido_id}))
+
+    else:
+        messages.error(request, 'Pagamento Já Realizado')
+        return redirect('pedido:lista')
 
 class SalvarPedido(View):
     template_name = 'pedido/pagar.html'
